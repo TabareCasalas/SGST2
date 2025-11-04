@@ -1,0 +1,244 @@
+.estudiante-grupo-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.no-grupo-message {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.no-grupo-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.no-grupo-message h2 {
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.no-grupo-message p {
+  color: #718096;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background: #fff5f5;
+  border: 2px solid #feb2b2;
+  border-radius: 0.5rem;
+  color: #c53030;
+}
+
+.grupo-header {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.grupo-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.grupo-name {
+  margin: 0;
+  font-size: 2rem;
+  color: #1a202c;
+  font-weight: 700;
+}
+
+.grupo-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.status-badge.activo {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-badge.inactivo {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.grupo-descripcion {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.grupo-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.responsable-card {
+  border-left: 4px solid #667eea;
+}
+
+.asistentes-card {
+  border-left: 4px solid #4299e1;
+}
+
+.estudiantes-card {
+  border-left: 4px solid #48bb78;
+}
+
+.card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.card-content {
+  min-height: 100px;
+}
+
+.miembro-info {
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  border-left: 3px solid #667eea;
+}
+
+.miembro-nombre {
+  font-weight: 600;
+  color: #1a202c;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge-yo {
+  background: #667eea;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.miembro-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.miembros-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.miembro-item {
+  padding: 0.75rem;
+  background: #f7fafc;
+  border-radius: 0.5rem;
+  border-left: 3px solid #4299e1;
+  transition: background 0.2s;
+}
+
+.miembro-item:hover {
+  background: #edf2f7;
+}
+
+.miembro-item.mi-propio {
+  background: #e6fffa;
+  border-left-color: #48bb78;
+}
+
+.miembro-item.mi-propio:hover {
+  background: #b2f5ea;
+}
+
+.no-miembros {
+  color: #a0aec0;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .estudiante-grupo-container {
+    padding: 1rem;
+  }
+
+  .grupo-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .grupo-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+

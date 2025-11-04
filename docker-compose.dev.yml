@@ -1,0 +1,94 @@
+<<<<<<< Updated upstream
+version: '3.8'
+
+services:
+  # Solo base de datos para desarrollo
+  postgres:
+    image: postgres:15-alpine
+    container_name: sgst_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sgst_db
+      POSTGRES_USER: sgst_user
+      POSTGRES_PASSWORD: sgst_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sgst_network_dev
+
+  # PgAdmin para administración
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sgst_pgadmin_dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sgst.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    networks:
+      - sgst_network_dev
+    volumes:
+      - pgadmin_data_dev:/var/lib/pgadmin
+
+  # Camunda BPM Platform para desarrollo
+  camunda:
+    image: camunda/camunda-bpm-platform:run-latest
+    container_name: sgst_camunda_dev
+    restart: unless-stopped
+    environment:
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres:5432/camunda_db
+      DB_USERNAME: sgst_user
+      DB_PASSWORD: sgst_password
+      WAIT_FOR: postgres:5432
+    ports:
+      - "8081:8080"
+    volumes:
+      - camunda_data_dev:/camunda/webapps
+      - ./camunda/diagrams:/camunda/diagrams
+    depends_on:
+      - postgres
+    networks:
+      - sgst_network_dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/engine-rest/engine"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  pgadmin_data_dev:
+    driver: local
+  camunda_data_dev:
+    driver: local
+
+networks:
+  sgst_network_dev:
+    driver: bridge
+
+
+
+=======
+# Docker Compose para desarrollo local
+# Este archivo excluye frontend y backend para correrlos localmente
+# Uso: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+  frontend:
+    profiles:
+      - exclude  # Excluir este servicio
+  backend:
+    profiles:
+      - exclude  # Excluir este servicio
+>>>>>>> Stashed changes
+
+

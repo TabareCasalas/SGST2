@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_flujo_tramite" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="procesoTramite" name="Proceso de Trámite" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_Tramite">
+      <bpmn:outgoing>Flow_CrearTramite</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- External Task: Crear Trámite -->
+    <bpmn:serviceTask id="taskCrearTramite" name="Crear Trámite">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="type" value="external" />
+          <camunda:property name="topic" value="crear-tramite" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_CrearTramite</bpmn:incoming>
+      <bpmn:outgoing>Flow_ValidarTramite</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Gateway de validación -->
+    <bpmn:exclusiveGateway id="Gateway_ValidarTramite">
+      <bpmn:incoming>Flow_ValidarTramite</bpmn:incoming>
+      <bpmn:outgoing>Flow_TramiteValido</bpmn:outgoing>
+      <bpmn:outgoing>Flow_TramiteInvalido</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- External Task: Enviar Notificación -->
+    <bpmn:serviceTask id="taskNotificar" name="Enviar Notificación">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="type" value="external" />
+          <camunda:property name="topic" value="enviar-notificacion" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_TramiteValido</bpmn:incoming>
+      <bpmn:outgoing>Flow_ActualizarEstado</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- External Task: Actualizar Estado -->
+    <bpmn:serviceTask id="taskActualizarEstado" name="Actualizar Estado">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="type" value="external" />
+          <camunda:property name="topic" value="actualizar-estado" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ActualizarEstado</bpmn:incoming>
+      <bpmn:outgoing>Flow_EndSuccess</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Usuario Task: Revisar Tramite Rechazado -->
+    <bpmn:userTask id="taskRevisarTramite" name="Revisar Trámite Rechazado">
+      <bpmn:incoming>Flow_TramiteInvalido</bpmn:incoming>
+      <bpmn:outgoing>Flow_EndRechazado</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:endEvent id="EndEvent_Success">
+      <bpmn:incoming>Flow_EndSuccess</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <bpmn:endEvent id="EndEvent_Rechazado">
+      <bpmn:incoming>Flow_EndRechazado</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <bpmn:sequenceFlow id="Flow_CrearTramite" sourceRef="StartEvent_Tramite" targetRef="taskCrearTramite" />
+    <bpmn:sequenceFlow id="Flow_ValidarTramite" sourceRef="taskCrearTramite" targetRef="Gateway_ValidarTramite" />
+    <bpmn:sequenceFlow id="Flow_TramiteValido" name="Válido" sourceRef="Gateway_ValidarTramite" targetRef="taskNotificar">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${validado == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_TramiteInvalido" name="Inválido" sourceRef="Gateway_ValidarTramite" targetRef="taskRevisarTramite">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${validado == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_ActualizarEstado" sourceRef="taskNotificar" targetRef="taskActualizarEstado" />
+    <bpmn:sequenceFlow id="Flow_EndSuccess" sourceRef="taskActualizarEstado" targetRef="EndEvent_Success" />
+    <bpmn:sequenceFlow id="Flow_EndRechazado" sourceRef="taskRevisarTramite" targetRef="EndEvent_Rechazado" />
+  </bpmn:process>
+  
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="procesoTramite">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_Tramite">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="ServiceTask_CrearTramite_di" bpmnElement="taskCrearTramite">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_ValidarTramite_di" bpmnElement="Gateway_ValidarTramite">
+        <dc:Bounds x="425" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="ServiceTask_Notificar_di" bpmnElement="taskNotificar">
+        <dc:Bounds x="530" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="ServiceTask_ActualizarEstado_di" bpmnElement="taskActualizarEstado">
+        <dc:Bounds x="685" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="UserTask_Revisar_di" bpmnElement="taskRevisarTramite">
+        <dc:Bounds x="530" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="EndEvent_Success_di" bpmnElement="EndEvent_Success">
+        <dc:Bounds x="832" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="EndEvent_Rechazado_di" bpmnElement="EndEvent_Rechazado">
+        <dc:Bounds x="832" y="263" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNEdge id="Flow_CrearTramite_di" bpmnElement="Flow_CrearTramite">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_ValidarTramite_di" bpmnElement="Flow_ValidarTramite">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="425" y="117" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_TramiteValido_di" bpmnElement="Flow_TramiteValido">
+        <di:waypoint x="475" y="117" />
+        <di:waypoint x="530" y="117" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_TramiteInvalido_di" bpmnElement="Flow_TramiteInvalido">
+        <di:waypoint x="450" y="142" />
+        <di:waypoint x="450" y="280" />
+        <di:waypoint x="580" y="280" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_ActualizarEstado_di" bpmnElement="Flow_ActualizarEstado">
+        <di:waypoint x="630" y="117" />
+        <di:waypoint x="685" y="117" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_EndSuccess_di" bpmnElement="Flow_EndSuccess">
+        <di:waypoint x="785" y="117" />
+        <di:waypoint x="832" y="117" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_EndRechazado_di" bpmnElement="Flow_EndRechazado">
+        <di:waypoint x="630" y="280" />
+        <di:waypoint x="832" y="281" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

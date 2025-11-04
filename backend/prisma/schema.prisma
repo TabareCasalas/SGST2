@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id_usuario       Int             @id @default(autoincrement())
+  nombre           String
+  ci               String          @unique
+  domicilio        String
+  telefono         String
+  correo           String          @unique
+  password         String?         // Contraseña hasheada con bcrypt (opcional por ahora)
+  rol              String          @default("estudiante") // estudiante, docente, consultante, administrador
+  nivel_acceso     Int?            // Para administradores: 1=administrativo, 2=docente, 3=sistema (null para otros roles)
+  activo           Boolean         @default(true)
+  semestre         String?         // Para estudiantes
+  refresh_token    String?         // Token JWT de refresco para sesiones persistentes
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+  
+  consultantes     Consultante[]
+  auditorias       Auditoria[]
+  grupos_participa UsuarioGrupo[]
+  hojas_ruta       HojaRuta[]
+  documentos       DocumentoAdjunto[]
+}
+
+model Consultante {
+  id_consultante Int      @id @default(autoincrement())
+  id_usuario     Int      @unique
+  est_civil      String
+  nro_padron     Int      @unique
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  
+  usuario        Usuario  @relation(fields: [id_usuario], references: [id_usuario])
+  tramites       Tramite[]
+}
+
+model Grupo {
+  id_grupo        Int             @id @default(autoincrement())
+  nombre          String
+  descripcion     String?
+  activo          Boolean         @default(true)
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  
+  tramites        Tramite[]
+  miembros_grupo  UsuarioGrupo[]
+}
+
+model UsuarioGrupo {
+  id_usuario_grupo    Int       @id @default(autoincrement())
+  id_usuario          Int
+  id_grupo            Int
+  rol_en_grupo        String    // responsable, asistente, estudiante
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  
+  usuario             Usuario   @relation(fields: [id_usuario], references: [id_usuario])
+  grupo               Grupo     @relation(fields: [id_grupo], references: [id_grupo])
+  
+  @@unique([id_usuario, id_grupo])
+  @@index([id_grupo])
+  @@index([id_usuario])
+}
+
+model Tramite {
+  id_tramite         Int       @id @default(autoincrement())
+  id_consultante     Int
+  id_grupo           Int
+  num_carpeta        Int       @unique
+  estado             String    @default("pendiente_asignacion") // pendiente_asignacion, en_revision, requiere_correccion, aprobado, rechazado, finalizado, desistido
+  observaciones      String?
+  fecha_inicio       DateTime  @default(now())
+  fecha_cierre       DateTime?
+  motivo_cierre      String?
+  process_instance_id String?  // ID de la instancia en Camunda
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  
+  consultante        Consultante @relation(fields: [id_consultante], references: [id_consultante])
+  grupo              Grupo       @relation(fields: [id_grupo], references: [id_grupo])
+  notificaciones     Notificacion[]
+  hoja_ruta          HojaRuta[]
+  documentos         DocumentoAdjunto[]
+}
+
+model Notificacion {
+  id_notificacion   Int      @id @default(autoincrement())
+  id_tramite        Int
+  tipo_notificacion String
+  mensaje           String
+  enviado           Boolean  @default(false)
+  created_at        DateTime  @default(now())
+  
+  tramite           Tramite  @relation(fields: [id_tramite], references: [id_tramite])
+}
+
+model Auditoria {
+  id_auditoria  Int      @id @default(autoincrement())
+  id_usuario    Int?
+  tipo_entidad  String   // 'usuario', 'tramite', 'grupo', etc.
+  id_entidad    Int?     // ID de la entidad modificada
+  accion        String   // 'crear', 'modificar', 'desactivar', etc.
+  detalles      String?  // Detalles del cambio
+  ip_address    String?
+  created_at    DateTime @default(now())
+  
+  usuario       Usuario? @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+model HojaRuta {
+  id_hoja_ruta    Int       @id @default(autoincrement())
+  id_tramite      Int
+  id_usuario      Int       // Estudiante que realizó la actuación
+  fecha_actuacion DateTime  @default(now())
+  descripcion     String    // Descripción de la actuación realizada
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  
+  tramite         Tramite   @relation(fields: [id_tramite], references: [id_tramite], onDelete: Cascade)
+  usuario         Usuario   @relation(fields: [id_usuario], references: [id_usuario])
+  
+  @@index([id_tramite])
+  @@index([id_usuario])
+}
+
+model DocumentoAdjunto {
+  id_documento      Int       @id @default(autoincrement())
+  id_tramite        Int
+  id_usuario        Int       // Usuario que subió el documento
+  nombre_archivo    String    // Nombre original del archivo
+  nombre_almacenado String    // Nombre del archivo en el servidor
+  ruta_archivo      String    // Ruta completa del archivo
+  tipo_mime         String    // Tipo MIME del archivo (ej: application/pdf, image/jpeg)
+  tamano            Int       // Tamaño del archivo en bytes
+  descripcion       String?   // Descripción opcional del documento
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  tramite           Tramite   @relation(fields: [id_tramite], references: [id_tramite], onDelete: Cascade)
+  usuario           Usuario   @relation(fields: [id_usuario], references: [id_usuario])
+  
+  @@index([id_tramite])
+  @@index([id_usuario])
+}
+
+

@@ -1,0 +1,248 @@
+.documentos-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.documentos-modal {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 900px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-upload-documento {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s;
+}
+
+.btn-upload-documento:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.upload-form {
+  background: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #e2e8f0;
+}
+
+.upload-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.upload-form label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.upload-form input[type="file"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-form input[type="file"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.upload-form input[type="file"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.file-info {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #edf2f7;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-size {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.upload-form small {
+  display: block;
+  margin-top: 0.25rem;
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+.upload-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.upload-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.documentos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.documento-item {
+  background: #f7fafc;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid #667eea;
+  transition: all 0.2s;
+}
+
+.documento-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.documento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.documento-info {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.file-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.documento-details {
+  flex: 1;
+}
+
+.documento-details strong {
+  display: block;
+  color: #2d3748;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+
+.documento-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #718096;
+  flex-wrap: wrap;
+}
+
+.documento-descripcion {
+  margin-top: 0.5rem;
+  color: #4a5568;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.documento-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-download,
+.btn-delete {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-download {
+  color: #667eea;
+}
+
+.btn-download:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.btn-delete {
+  color: #f56565;
+}
+
+.btn-delete:hover {
+  background: rgba(245, 101, 101, 0.1);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: #718096;
+}
+
+.empty-state svg {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state .hint {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
